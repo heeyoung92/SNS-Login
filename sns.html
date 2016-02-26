@@ -1,0 +1,374 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html itemscope itemtype="http://schema.org/Article">
+<head>
+<!-- Qunit   -->
+  <link rel="stylesheet" href="resources/qunit-1.21.0.css">
+
+  
+<!-- Naver -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src="resources/jquery.cookie.js"></script>
+<script type="text/javascript"src="resources/naverLogin_implicit-1.0.2.js"></script> <!-- login API 라이브러리 -->
+
+
+<!-- Google -->
+<meta name="google-signin-scope" content="profile email">
+
+<link href="https://fonts.googleapis.com/css?family=Roboto"
+	rel="stylesheet" type="text/css">
+<script src="https://apis.google.com/js/api:client.js"></script>
+
+
+<style>
+iframe[src^="https://apis.google.com"] {
+	display: none;
+}
+</style>
+<!-- 
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+ </script>
+ 
+ <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
+ </script>
+  
+    <script>
+    function start() {
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: '256448056673-v9a4vjbskhhhpi3q3l594uouun2ot0ng.apps.googleusercontent.com',
+          // Scopes to request in addition to 'profile' and 'email'
+          scope: 'profile'
+        });
+      });
+    }
+    
+  </script>
+ -->
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+
+
+<style type="text/css">
+iframe[src^='https://apis.google.com'] {
+	display: none;
+}
+
+#customBtn {
+	display: inline-block;
+	background: #4285f4;
+	color: white;
+	width: 231.25px;
+	border-radius: 5px;
+	white-space: nowrap;
+}
+
+#customBtn:hover {
+	cursor: pointer;
+}
+
+span.label {
+	font-weight: bold;
+}
+
+span.icon {
+	background: url('/identity/sign-in/g-normal.png') transparent 5px 50%
+		no-repeat;
+	display: inline-block;
+	vertical-align: middle;
+	width: 50px;
+	height: 50px;
+	border-right: #2265d4 1px solid;
+}
+
+span.buttonText {
+	display: inline-block;
+	vertical-align: middle;
+	padding-left: 50px;
+	padding-right: 50px;
+	font-size: 14px;
+	font-weight: bold;
+	/* Use the Roboto font that is loaded in the <head> */
+	font-family: 'Roboto', sans-serif;
+}
+</style>
+
+<meta charset="UTF-8">
+<title>Social Login</title>
+</head>
+
+<body>
+	<h1>Please login:</h1>
+
+	<!--  Naver_Butoon  -->
+	<div id="naver_id_login"></div>
+	<br>
+	<h4><div id="naver_status1"></div></h4>
+	<h3><div id="naver_status"></div></h3>
+	<br>
+
+	<!-- Facebook_Button -->
+	<fb:login-button scope="public_profile,email"
+		onlogin="checkLoginState();"></fb:login-button>
+	<div class="fb-login-button" data-max-rows="10" data-size="xlarge"
+		data-show-faces="false" data-auto-logout-link="true"
+		onlogin="checkLoginState();"></div><p>
+
+	<h3><div id="status"></div></h3>
+	<br>
+	<br>
+
+
+	<!--  google-butoon 
+	<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+	<div id="google_status"></div><br> 
+	-->
+
+	<div id="gSignInWrapper">
+		<div id="customBtn" class="customGPlusSignIn">
+			<span class="icon"></span> <span class="buttonText">Google</span>
+		</div>
+	</div>
+	<p>
+	
+	
+	<h4><div id="google_status1"></div></h4>
+	<h3><div id="name"></div></h3>
+	
+	<!--  Naver	 -->
+	<script type="text/javascript">
+		var naver_id_login = new naver_id_login();
+		naver_id_login.setButton("green", 3, 50);
+	//	naver_id_login.setDomain("");  
+			//콜백 URL과 로그인 버튼이 붙은 페이지의 도메인이 서로 다른 경우 설정 필요 
+			// 로그인 버튼이 붙은 페이지의 domain은 wwww.service.com이고 콜백 URL로 설정된 페이지는 callback.service.com인 경우 -> ".service.com"
+
+		var state = naver_id_login.getUniqState(); //state 값 생성
+		naver_id_login.setState(state); // 사이트 간 요청 위조(cross-site request forgery)공격을 방지하기 위해 
+
+	//	naver_id_login.setPopup();
+		naver_id_login.init_naver_id_login(); // 네이버 아이디로 로그인때 사용할 이미지 및 링크를 생성한다.
+	</script>
+
+	<script type="text/javascript">
+		function testcallback() //get_naver_userprofile 동작후 callback 될 function
+		{
+			console.log('\n');
+			console.log('get_naver_userprofile(): ');
+			console.log('id: ' + naver_id_login.getProfileData('id'));
+			console.log('enc_id: '+ naver_id_login.getProfileData('enc_id'));
+			console.log('email : '+ naver_id_login.getProfileData('email'));
+	//		console.log('name: '+naver_id_login.getProfileData('name'));
+			console.log('age: ' + naver_id_login.getProfileData('age'));
+			console.log('gender: '+ naver_id_login.getProfileData('gender'));
+			console.log('birthday: '+ naver_id_login.getProfileData('birthday'));
+			console.log('nickname: '+ naver_id_login.getProfileData('nickname'));
+			console.log('\n');
+
+			// if(id와 DB의 SNS_ID 일치하는 것 없다면 ) + 회원정보 가공 및 저장
+			document.getElementById('naver_status1').innerHTML = 'SUCCESS!';
+			document.getElementById('naver_status').innerHTML = 'Naver: Thanks for logging in, '
+				+ naver_id_login.getProfileData('email') + '!';
+			location.href = "http://test.comic1.co.kr/"; // 메인으로 이동
+
+		}
+		console.log('AccessToken: '+ naver_id_login.oauthParams.access_token);
+		naver_id_login.get_naver_userprofile("testcallback()"); // access_token이 유효할 경우 사용자 기본 정보(메일 주소, 별명, 프로필 사진, 생일, 연령대)를 조회
+	</script>
+
+	
+		<!-- Facebook  -->
+		<script>
+			// This is called with the results from from FB.getLoginStatus() -> login상태 check.
+			function statusChangeCallback(response) {
+				console.log('\nFacebook: statusChangeCallback');
+				//	    	console.log('Facebook_response:'+ response);
+				// The response object is returned with a status field that lets the
+				// app know the current login status of the person.
+				// Full docs on the response object can be found in the documentation
+				// for FB.getLoginStatus().
+				if (response.status === 'connected') {
+					// Logged into your app and Facebook.
+					getInfo();
+				} else if (response.status === 'not_authorized') {
+					// The person is logged into Facebook, but 앱 허가 No.
+					document.getElementById('status').innerHTML = 'Please log '
+							+ 'into this app.';
+				} else { // Facebook에 로그인 안된 상태
+					document.getElementById('status').innerHTML = 'Please log '
+							+ 'into Facebook.';
+				}
+			}
+
+			// This function is called when someone finishes with the Login Button.  
+			function checkLoginState() {
+				FB.getLoginStatus(function(response) {
+					statusChangeCallback(response);
+				});
+			}
+
+			window.fbAsyncInit = function() {
+				FB.init({
+					appId : 'YOUR_APP_ID',
+					cookie : true, // enable cookies to allow the server to access the session
+					xfbml : true, // parse social plugins on this page
+					//   				display	   : 'touch',
+					version : 'v2.2' // use version 2.2
+				});
+				
+				// 로딩시 Login상태 Check
+				/*FB.getLoginStatus(function(response) {
+					 statusChangeCallback(response);
+				});
+				 */
+			};
+
+			// Load the SDK asynchronously 로그인 버튼
+			(function(d, s, id) {
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id))
+					return;
+				js = d.createElement(s);
+				js.id = id;
+				js.src = "//connect.facebook.net/ko_KR/sdk.js#xfbml=1&version=v2.5";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+
+		
+			/*  email 유효성 검사 함수  */						
+			function validateEmail(email)
+			{	//이메일 유효성 검사를 위한 정규표현식
+				var regex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/; 	
+				return regex.test(email);
+			}
+			function alertTest(){
+				alert('만화1번지 로그인시 '+ 'email'+ ' 정보가 필요합니다.'); // alert	
+			}
+			function getInfo(){
+				console.log('Welcome!  Fetching your information.... ');
+				FB.api('/me/permissions',function(response) { // 정보제공 동의 안한(declined 된) 항목 찾기 
+					var declined = [];
+					var get_email ='Email@comic1.com';
+					for (i = 0; i < response.data.length; i++) {
+						if (response.data[i].status == 'declined') {
+							declined.push(response.data[i].permission);
+						}
+					}
+					if (declined.toString() != '') { 		//	declined된 정보가 있다면,
+						document.getElementById('status').innerHTML = 'Facebook login 실패!';
+						alert('만화1번지 로그인시 '+ declined.toString()+ ' 정보가 필요합니다.'); // alert
+						get_email = prompt('Email을 입력해주세요','Email@comic1.com'); // email 정보 얻기 
+
+						/*  email 유효성 정규식 검사  */
+						while (validateEmail(get_email) === false) {
+							get_email = null;
+							get_email = prompt('잘못된 이메일 형식입니다.\n다시 입력해주세요.','Email@comic1.com');
+							if(get_email == null)
+								break;
+						}	
+					}
+
+				  	if( get_email != null ){	 // 사용자 email 정보있으면 정보가져오기
+						FB.api('/me',function(response) { //회원 정보 가져오기
+							console.log('Successful login for: '+ response.name);
+							console.log('\n');
+							console.log('FB.api(): ');
+
+							if (response.email != undefined)
+								get_email = response.email;
+
+							console.log('email: '+ response.email);
+							console.log('get_email : '+ get_email);
+							console.log('name: '+ response.name);
+							console.log('first_name: '+ response.first_name);
+							console.log('last_name: '+ response.last_name);
+							console.log('gender: '+ response.gender);
+					//	 	console.log('age_range: '+response.age_range);
+							console.log('id: '+ response.id);
+							console.log('\n');
+
+							console.log(JSON.stringify(response));
+		
+							document.getElementById('status').innerHTML = 'Thanks for logging in, '+ get_email+ '!';
+						});
+				  	}
+				});
+			}
+		</script>
+
+
+		<!--Google-->
+		<script>
+			var googleUser = {};
+			var startApp = function() {
+				gapi.load('auth2',function() {
+				// Retrieve the singleton for the GoogleAuth library and set up the client.
+					auth2 = gapi.auth2.init({
+						client_id : 'YOUR_Client_ID',
+						cookiepolicy : 'single_host_origin',
+					//	approvalprompt:'force',
+
+
+					//	Request scopes in addition to 'profile' and 'email'
+					//	scope: 'additional_scope'
+					});
+					attachSignin(document.getElementById('customBtn'));
+				});
+			}; 
+
+			function attachSignin(element) {
+				// 	    console.log(element.id);
+				auth2.attachClickHandler(element, {}, function(googleUser) {
+					document.getElementById('google_status1').innerText = "SUCCESS!";
+					document.getElementById('name').innerText = "Signed in: "
+							+ googleUser.getBasicProfile().getEmail();
+					var profile = googleUser.getBasicProfile();
+					console.log('\n');
+					console.log('googleUser.getBasicProfile(): ');
+
+					console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+					console.log("Name: " + profile.getName());
+					console.log("Image URL: " + profile.getImageUrl());
+					console.log("Email: " + profile.getEmail());
+
+					// The ID token you need to pass to your backend:
+					var id_token = googleUser.getAuthResponse().id_token;
+					console.log("ID Token: " + id_token);
+
+				}, function(error) {
+					alert(JSON.stringify(error, undefined, 2));
+				});
+			}
+
+		/* 	function onSignIn(googleUser) {
+			// 	Useful data for your client-side scripts:
+				var profile = googleUser.getBasicProfile();
+			  	document.getElementById('google_status').innerHTML = 'Thanks for logging in, ' + profile.getEmail()+ '!';
+			  	console.log('\n');
+			    console.log('googleUser.getBasicProfile(): ');
+				 
+			    console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+			    console.log("Name: " + profile.getName());
+			    console.log("Image URL: " + profile.getImageUrl());
+			    console.log("Email: " + profile.getEmail());
+
+			 // The ID token you need to pass to your backend:
+			    var id_token = googleUser.getAuthResponse().id_token;
+			    console.log("ID Token: " + id_token);
+			};*/
+		</script>
+
+		<script>
+			startApp();
+		</script>
+
+<!-- Qunit 	  	-->	
+	
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+ 	<script src="resources/qunit-1.21.0.js"></script>
+ 	<script src="resources/event.mock.js"></script>
+	<script src="resources/util.js"></script>
+ 	
+  	<script src="unitTest.js"></script>
+  	
+</body>
+</html>
